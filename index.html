@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For My Love</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Georgia', serif;
+  background: linear-gradient(-45deg, #ff9a9e, #fecfef, #fecfef, #ffc3a0);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  overflow-x: hidden;
+  min-height: 100vh;
+  color:white;
+}
+@keyframes gradientShift {
+  0% { background-position:0% 50%; }
+  50% { background-position:100% 50%; }
+  100% { background-position:0% 50%; }
+}
+
+.container { max-width:1200px; margin:0 auto; padding:20px; position:relative; z-index:2; }
+.floating-hearts { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+.heart { position:absolute; color:rgba(255,255,255,0.8); font-size:20px; animation:float 6s ease-in-out infinite; }
+.heart:nth-child(odd){ animation-delay:-2s; }
+.heart:nth-child(even){ animation-delay:-4s; }
+@keyframes float { 0%{transform:translateY(100vh) rotate(0deg);opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{transform:translateY(-100px) rotate(360deg);opacity:0;} }
+
+.main-content { position:relative; text-align:center; padding:50px 20px; z-index:2; }
+.title { font-size:4rem; color:white; text-shadow:2px 2px 15px rgba(0,0,0,0.5); margin-bottom:30px; animation:fadeInUp 1s ease-out; }
+.subtitle { font-size:1.5rem; color:white; margin-bottom:50px; opacity:0.9; text-shadow:1px 1px 5px rgba(0,0,0,0.5); animation:fadeInUp 1s ease-out 0.5s both; }
+
+.music-player, .video-player {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(20px);
+  border-radius:20px;
+  padding:30px;
+  margin:50px auto;
+  max-width:700px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.2);
+  color:white;
+}
+.play-button { width:80px; height:80px; border-radius:50%; border:none; background:linear-gradient(45deg,#ff6b6b,#ff8e8e); color:white; font-size:2rem; cursor:pointer; margin:20px; box-shadow:0 10px 30px rgba(255,107,107,0.4); transition:all 0.3s ease; }
+.play-button:hover { transform:scale(1.1); box-shadow:0 15px 40px rgba(255,107,107,0.6); }
+
+.message-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:30px; margin:50px 0; }
+.card { background:rgba(255,255,255,0.15); backdrop-filter:blur(15px); border-radius:20px; padding:40px; text-align:center; transition:all 0.5s ease; cursor:pointer; border:1px solid rgba(255,255,255,0.2); opacity:0; transform:translateY(50px); }
+.card.visible { opacity:1; transform:translateY(0); }
+.card:hover { transform:translateY(-10px) scale(1.02); background:rgba(255,255,255,0.25); box-shadow:0 20px 60px rgba(0,0,0,0.15); }
+.card h3 { color:white; font-size:1.8rem; margin-bottom:20px; text-shadow:1px 1px 5px rgba(0,0,0,0.3); }
+.card p { color:white; font-size:1.1rem; line-height:1.6; opacity:0.9; }
+
+.final-message { background: rgba(255,255,255,0.2); backdrop-filter:blur(20px); border-radius:30px; padding:60px; margin:80px auto; max-width:800px; text-align:center; box-shadow:0 30px 60px rgba(0,0,0,0.1); opacity:0; transform:scale(0.9); transition:all 1s ease; }
+.final-message.visible { opacity:1; transform:scale(1); }
+.final-message h2 { color:white; font-size:2.5rem; margin-bottom:30px; text-shadow:2px 2px 10px rgba(0,0,0,0.3); }
+.final-message p { color:white; font-size:1.3rem; line-height:1.8; opacity:0.95; }
+
+@keyframes fadeInUp { from{opacity:0; transform:translateY(50px);} to{opacity:1; transform:translateY(0);} }
+.sparkle { position:absolute; width:4px; height:4px; background:white; border-radius:50%; animation:sparkle 2s ease-in-out infinite; }
+@keyframes sparkle { 0%,100%{opacity:0; transform:scale(0);} 50%{opacity:1; transform:scale(1);} }
+
+.nav-btn { display:inline-block; padding:15px 30px; font-size:1.2rem; color:white; background:linear-gradient(45deg,#ff6b6b,#ff8e8e); border-radius:30px; text-decoration:none; box-shadow:0 10px 20px rgba(0,0,0,0.2); transition:all 0.3s ease; margin:10px;}
+.nav-btn:hover { transform:scale(1.1); box-shadow:0 15px 30px rgba(0,0,0,0.3); }
+
+section { display:none; }
+section.active { display:block; }
+
+.video-player video { display:block; margin:0 auto; border-radius:20px; max-width:100%; height:auto; }
+
+@media(max-width:768px){ .title{font-size:2.5rem;} .subtitle{font-size:1.2rem;} .card{padding:30px;} .final-message{padding:40px; margin:40px auto;} }
+</style>
+</head>
+<body>
+<div class="floating-hearts"></div>
+
+<div class="container">
+  <!-- Section 1: Letter & Music -->
+  <section id="section1" class="active">
+    <div class="main-content">
+      <h1 class="title">For My Beautiful KUKKU JII</h1>
+      <p class="subtitle">A digital expression of my heart</p>
+
+      <div class="music-player">
+        <h3 style="margin-bottom:20px;">Your Song</h3>
+        <button class="play-button" onclick="toggleMusic()">▶</button>
+        <p style="opacity:0.8;">Click to play our special music</p>
+        <audio id="backgroundMusic" loop>
+          <source src="my-music.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+
+      <div class="message-cards">
+        <div class="card" data-delay="0"><h3>Every Morning</h3><p>I wake up grateful for another day to love you. Your smile is the sunshine that brightens my world.</p></div>
+        <div class="card" data-delay="200"><h3>Your Laugh</h3><p>Even imagining your laughter feels like the sweetest melody, making my soul skip with joy.</p></div>
+        <div class="card" data-delay="400"><h3>In Your Eyes</h3><p>I see my dreams, and my home in your eyes. Every glance from you is a little spark of forever.</p></div>
+        <div class="card" data-delay="600"><h3>Forever Promise</h3><p>Through every season and challenge  I choose you, always.</p></div>
+      </div>
+
+      <div class="final-message">
+        <h2>I Love You</h2>
+        <p>I love you more than words can say. Your smile brighten even my darkest days. Just thinking of you makes my heart flutter and my soul sing. With every heartbeat, I fall for you all over again.</p>
+        <p style="margin-top:30px;font-style:italic;">With all my love, always ❤️</p>
+      </div>
+
+      <div style="text-align:center; margin-top:50px;">
+        <button class="nav-btn" onclick="showSection(2)">Next ➝</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Video -->
+  <section id="section2">
+    <div class="main-content">
+      <h1 class="title">For My Beautiful KUKKU JII</h1>
+      <p class="subtitle">A special video just for you 💗</p>
+
+      <div class="video-player">
+        <video controls>
+          <source src="your-video.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <div style="text-align:center; margin-top:50px;">
+        <button class="nav-btn" onclick="showSection(1)">⬅ Back</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+// Floating hearts
+function createHeart() {
+  const heart=document.createElement('div');
+  heart.innerHTML='❤'; heart.className='heart';
+  heart.style.left=Math.random()*100+'vw';
+  heart.style.animationDuration=(Math.random()*3+3)+'s';
+  heart.style.fontSize=(Math.random()*20+10)+'px';
+  document.querySelector('.floating-hearts').appendChild(heart);
+  setTimeout(()=>heart.remove(),6000);
+}
+setInterval(createHeart,2000);
+
+// Sparkles
+function createSparkle() {
+  const sparkle=document.createElement('div');
+  sparkle.className='sparkle';
+  sparkle.style.left=Math.random()*100+'vw';
+  sparkle.style.top=Math.random()*100+'vh';
+  sparkle.style.animationDelay=Math.random()*2+'s';
+  document.body.appendChild(sparkle);
+  setTimeout(()=>sparkle.remove(),2000);
+}
+setInterval(createSparkle,500);
+
+// Music
+let isPlaying=false;
+const music=document.getElementById('backgroundMusic');
+const playButton=document.querySelector('.play-button');
+function toggleMusic(){
+  if(isPlaying){ music.pause(); playButton.innerHTML='▶'; }
+  else{ music.play().catch(()=>{}); playButton.innerHTML='⏸'; }
+  isPlaying=!isPlaying;
+}
+
+// Animate cards & final message
+function animateCards(){
+  const cards=document.querySelectorAll('#section1 .card');
+  const finalMessage=document.querySelector('#section1 .final-message');
+  cards.forEach((card)=>{const delay=parseInt(card.dataset.delay)||0; setTimeout(()=>{card.classList.add('visible');},delay);});
+  setTimeout(()=>{finalMessage.classList.add('visible');},2000);
+}
+window.addEventListener('load',()=>{setTimeout(animateCards,1500);});
+
+// Card click effect
+document.querySelectorAll('#section1 .card').forEach(card=>{
+  card.addEventListener('click',function(){
+    this.style.transform='scale(0.95)';
+    setTimeout(()=>{this.style.transform='translateY(-10px) scale(1.02)';},150);
+  });
+});
+
+// Section navigation with auto stop music & video
+function showSection(num){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('section'+num).classList.add('active');
+  
+  // Stop music if moving away from section 1
+  if(num !== 1 && isPlaying){
+      music.pause();
+      playButton.innerHTML = '▶';
+      isPlaying = false;
+  }
+
+  // Stop video if moving away from section 2
+  const video = document.querySelector('#section2 video');
+  if(num !== 2 && !video.paused){
+      video.pause();
+  }
+}
+</script>
+</body>
+</html>
